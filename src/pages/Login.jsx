@@ -109,24 +109,6 @@ export default function Login() {
             </Button>
           </form>
 
-          {/* Demo credentials hint */}
-          <div className="mt-6 p-4 bg-gray-800/50 border border-gray-700/50 rounded-xl">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Demo Credentials</p>
-            <div className="space-y-2">
-              <div>
-                <p className="text-xs text-gray-400">
-                  <span className="text-violet-400 font-medium">Super Admin:</span>{' '}
-                  superadmin@gamexpay.com / superadmin123
-                </p>
-              </div>
-              <div>
-                <p className="text-xs text-gray-400">
-                  <span className="text-gray-300 font-medium">Admin:</span>{' '}
-                  admin@gamexpay.com / admin123
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
