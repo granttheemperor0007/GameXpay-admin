@@ -61,45 +61,31 @@ export default function Dashboard() {
         <p className="text-sm text-gray-500 mt-0.5">Overview of your GameXPay store</p>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        <StatCard
-          title="Total Revenue"
-          value={fmt(totalRevenue)}
-          subtitle={`${completedOrders} completed orders`}
-          icon={DollarSign}
-          color="violet"
-        />
-        {isSuperAdmin && (
-          <StatCard
-            title="Total Profit"
-            value={fmt(totalProfit)}
-            subtitle="From completed orders"
-            icon={TrendingUp}
-            color="emerald"
-          />
-        )}
-        <StatCard
-          title="Total Orders"
-          value={totalOrders}
-          subtitle={`${cancelledOrders} cancelled`}
-          icon={ShoppingCart}
-          color="sky"
-        />
-        <StatCard
-          title="Pending Orders"
-          value={pendingOrders}
-          subtitle="Awaiting fulfillment"
-          icon={Clock}
-          color="amber"
-        />
-        <StatCard
-          title="Active Games"
-          value={activeGames}
-          subtitle={`${games.length} total in catalog`}
-          icon={Gamepad2}
-          color="rose"
-        />
+      {/* Stats — horizontal strip */}
+      <div className="bg-gray-900 border border-gray-700/50 rounded-xl overflow-x-auto">
+        <div className="flex min-w-[640px]">
+          {[
+            { label: 'Total Revenue', value: fmt(totalRevenue), change: '+12.4%', positive: true, color: 'text-violet-400', sub: 'than last month' },
+            ...(isSuperAdmin ? [{ label: 'Total Profit', value: fmt(totalProfit), change: '+8.1%', positive: true, color: 'text-emerald-400', sub: 'than last month' }] : []),
+            { label: 'Total Orders', value: totalOrders.toLocaleString(), change: '+5.3%', positive: true, color: 'text-sky-400', sub: 'than last month' },
+            { label: 'Pending Orders', value: pendingOrders.toLocaleString(), change: '-2.7%', positive: false, color: 'text-amber-400', sub: 'than last month' },
+            { label: 'Active Games', value: activeGames.toLocaleString(), change: `${games.length} total`, positive: true, color: 'text-rose-400', sub: 'in catalog' },
+          ].map((stat, i, arr) => (
+            <div
+              key={stat.label}
+              className={`flex-1 px-6 py-5 ${i < arr.length - 1 ? 'border-r border-gray-700/50' : ''}`}
+            >
+              <p className="text-xs text-gray-400 mb-1.5 font-medium">{stat.label}</p>
+              <p className={`text-3xl leading-none mb-2 ${stat.color}`} style={{ fontFamily: "'Big Shoulders Display', sans-serif", fontWeight: 700, letterSpacing: '0em' }}>{stat.value}</p>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className={`text-xs font-semibold px-1.5 py-0.5 rounded ${stat.positive ? 'text-emerald-400 bg-emerald-500/10' : 'text-red-400 bg-red-500/10'}`}>
+                  {stat.change}
+                </span>
+                <span className="text-xs text-gray-500">· {stat.sub}</span>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Order breakdown */}
@@ -194,8 +180,8 @@ export default function Dashboard() {
               <img
                 src={game.image}
                 alt={game.name}
-                className="w-10 h-10 rounded-lg object-cover"
-                onError={(e) => { e.target.src = `https://placehold.co/40x40/1f2937/7c3aed?text=${game.shortName}`; }}
+                className="w-6 h-6 rounded object-cover"
+                onError={(e) => { e.target.src = `https://placehold.co/24x24/1e1e1e/ffffff?text=${game.shortName}`; }}
               />
               <div>
                 <p className="text-xs font-medium text-gray-200 truncate w-full">{game.shortName}</p>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Zap, Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/Button';
 import Input from '../components/Input';
@@ -44,14 +44,12 @@ export default function Login() {
 
       <div className="relative w-full max-w-md">
         {/* Card */}
-        <div className="bg-gray-900 border border-gray-700/60 rounded-2xl shadow-2xl p-8">
+        <div className="bg-gray-900 border border-white/[0.08] rounded-2xl shadow-2xl p-8">
           {/* Logo */}
           <div className="flex flex-col items-center mb-8">
-            <div className="w-12 h-12 rounded-xl bg-violet-600 flex items-center justify-center mb-4 shadow-lg shadow-violet-500/30">
-              <Zap size={24} className="text-white" />
-            </div>
-            <h1 className="text-2xl font-bold text-gray-100 tracking-tight">GameXPay</h1>
-            <p className="text-sm text-gray-500 mt-1">Admin Portal — Sign in to continue</p>
+            <img src="/GameXpay.svg" alt="GameXPay" className="h-14 w-auto mb-4" />
+            <h1 style={{ fontSize: '16px', fontWeight: 600, letterSpacing: '-0.02em', margin: 0 }} className="text-gray-100">GameXpay Admin Portal</h1>
+            <p className="text-sm mt-1" style={{ color: '#504F51' }}>Sign in to continue</p>
           </div>
 
           {/* Error alert */}
@@ -84,10 +82,10 @@ export default function Login() {
                   onChange={(e) => setPassword(e.target.value)}
                   autoComplete="current-password"
                   className="
-                    w-full px-3 py-2 pr-10 rounded-lg text-sm
-                    bg-gray-800 border border-gray-700 text-gray-100 placeholder-gray-500
-                    focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent
-                    transition-colors
+                    w-full px-3 py-3 pr-10 rounded-lg text-sm
+                    bg-gray-800 border border-white/[0.08] text-gray-100 placeholder-gray-600
+                    focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-transparent
+                    transition-colors [color-scheme:dark]
                   "
                 />
                 <button

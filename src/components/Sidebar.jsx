@@ -1,94 +1,168 @@
-import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Gamepad2, ShoppingCart, CreditCard, LogOut, ChevronRight, Zap } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import {
+  LayoutDashboard, Gamepad2, ShoppingCart, CreditCard,
+  LogOut, Settings, ChevronDown,
+} from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-
-const navItems = [
-  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/games', label: 'Games', icon: Gamepad2 },
-  { to: '/orders', label: 'Orders', icon: ShoppingCart },
-  { to: '/transactions', label: 'Transactions', icon: CreditCard },
-];
+import { gamesService } from '../services/gamesService';
 
 export default function Sidebar({ mobile, onClose }) {
   const { user, isSuperAdmin, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [gamesOpen, setGamesOpen] = useState(false);
+  const [gamesList, setGamesList] = useState([]);
+
+  useEffect(() => {
+    gamesService.getAll().then(setGamesList);
+  }, []);
+
+  useEffect(() => {
+    if (location.pathname.startsWith('/games')) setGamesOpen(true);
+  }, [location.pathname]);
 
   const handleLogout = async () => {
     await logout();
     navigate('/login');
   };
 
+  const navBase = 'flex items-center gap-2.5 px-3 py-2 rounded-md text-[13px] font-medium transition-all duration-150 group w-full';
+  const navActive = 'bg-white/[0.08] text-white';
+  const navInactive = 'text-gray-500 hover:text-gray-200 hover:bg-white/[0.04]';
+
   return (
-    <aside className={`
-      flex flex-col h-full bg-gray-900 border-r border-gray-700/50
-      ${mobile ? 'w-full' : 'w-64'}
-    `}>
+    <aside className={`flex flex-col h-full border-r border-white/[0.06] bg-gray-900 ${mobile ? 'w-full' : 'w-56'}`}>
+
       {/* Logo */}
-      <div className="px-5 py-5 border-b border-gray-700/50 shrink-0">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center shrink-0">
-            <Zap size={16} className="text-white" />
-          </div>
-          <div>
-            <span className="text-base font-bold text-gray-100 tracking-tight">GameXPay</span>
-            <p className="text-[10px] text-gray-500 leading-none mt-0.5">Admin Portal</p>
-          </div>
-        </div>
+      <div className="px-4 py-4 border-b border-white/[0.06] shrink-0">
+        <img src="/sidebar-logo.svg" alt="GameXPay" className="h-7 w-auto" />
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto scrollbar-thin">
-        {navItems.map(({ to, label, icon: Icon }) => (
-          <NavLink
-            key={to}
-            to={to}
-            onClick={mobile ? onClose : undefined}
-            className={({ isActive }) => `
-              flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium
-              transition-colors duration-150 group
-              ${isActive
-                ? 'bg-violet-600/20 text-violet-400 border border-violet-500/20'
-                : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800/70'
-              }
-            `}
+      <nav className="flex-1 px-2 py-3 space-y-0.5 overflow-y-auto scrollbar-thin">
+
+        {/* Dashboard */}
+        <NavLink
+          to="/dashboard"
+          onClick={mobile ? onClose : undefined}
+          className={({ isActive }) => `${navBase} ${isActive ? navActive : navInactive}`}
+        >
+          {({ isActive }) => (
+            <>
+              <LayoutDashboard size={15} className={isActive ? 'text-white' : 'text-gray-600 group-hover:text-gray-300'} />
+              Dashboard
+            </>
+          )}
+        </NavLink>
+
+        {/* Games — expandable */}
+        <div>
+          <button
+            onClick={() => setGamesOpen(o => !o)}
+            className={`${navBase} ${location.pathname.startsWith('/games') ? navActive : navInactive}`}
           >
-            {({ isActive }) => (
-              <>
-                <Icon size={17} className={isActive ? 'text-violet-400' : 'text-gray-500 group-hover:text-gray-300'} />
-                {label}
-                {isActive && <ChevronRight size={13} className="ml-auto text-violet-400" />}
-              </>
-            )}
-          </NavLink>
-        ))}
+            <Gamepad2 size={15} className={location.pathname.startsWith('/games') ? 'text-white' : 'text-gray-600 group-hover:text-gray-300'} />
+            <span className="flex-1 text-left">Games</span>
+            <ChevronDown
+              size={13}
+              className={`text-gray-600 transition-transform duration-200 ${gamesOpen ? 'rotate-180' : ''}`}
+            />
+          </button>
+
+          {gamesOpen && (
+            <div className="ml-3 mt-0.5 pl-3 border-l border-white/[0.07] space-y-0.5">
+              <NavLink
+                to="/games"
+                end
+                onClick={mobile ? onClose : undefined}
+                className={({ isActive }) =>
+                  `flex items-center gap-2 px-2.5 py-1.5 rounded-md text-[12px] font-medium transition-colors ${isActive ? 'text-white bg-white/[0.06]' : 'text-gray-500 hover:text-gray-200 hover:bg-white/[0.03]'}`
+                }
+              >
+                All Games
+              </NavLink>
+              {gamesList.map(game => (
+                <button
+                  key={game.id}
+                  onClick={() => {
+                    navigate('/games', { state: { editGameId: game.id } });
+                    if (mobile) onClose?.();
+                  }}
+                  className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-md text-[12px] transition-colors text-gray-600 hover:text-gray-200 hover:bg-white/[0.03] text-left"
+                >
+                  <img
+                    src={game.image}
+                    alt={game.shortName}
+                    className="w-4 h-4 rounded shrink-0 object-cover"
+                    onError={(e) => { e.target.style.display = 'none'; }}
+                  />
+                  <span className="truncate">{game.name}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Orders */}
+        <NavLink
+          to="/orders"
+          onClick={mobile ? onClose : undefined}
+          className={({ isActive }) => `${navBase} ${isActive ? navActive : navInactive}`}
+        >
+          {({ isActive }) => (
+            <>
+              <ShoppingCart size={15} className={isActive ? 'text-white' : 'text-gray-600 group-hover:text-gray-300'} />
+              Orders
+            </>
+          )}
+        </NavLink>
+
+        {/* Transactions */}
+        <NavLink
+          to="/transactions"
+          onClick={mobile ? onClose : undefined}
+          className={({ isActive }) => `${navBase} ${isActive ? navActive : navInactive}`}
+        >
+          {({ isActive }) => (
+            <>
+              <CreditCard size={15} className={isActive ? 'text-white' : 'text-gray-600 group-hover:text-gray-300'} />
+              Transactions
+            </>
+          )}
+        </NavLink>
+
+        {/* Settings */}
+        <NavLink
+          to="/settings"
+          onClick={mobile ? onClose : undefined}
+          className={({ isActive }) => `${navBase} ${isActive ? navActive : navInactive}`}
+        >
+          {({ isActive }) => (
+            <>
+              <Settings size={15} className={isActive ? 'text-white' : 'text-gray-600 group-hover:text-gray-300'} />
+              Settings
+            </>
+          )}
+        </NavLink>
       </nav>
 
-      {/* User Info */}
-      <div className="px-3 py-3 border-t border-gray-700/50 shrink-0">
-        <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-gray-800/50 mb-1">
-          <div className="w-7 h-7 rounded-full bg-violet-600/30 border border-violet-500/30 flex items-center justify-center shrink-0">
-            <span className="text-xs font-bold text-violet-400">
-              {user?.name?.[0] ?? 'A'}
-            </span>
+      {/* User */}
+      <div className="px-2 py-3 border-t border-white/[0.06] shrink-0 space-y-0.5">
+        <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-md bg-white/[0.04]">
+          <div className="w-6 h-6 rounded-full bg-gray-800 border border-white/10 flex items-center justify-center shrink-0">
+            <span className="text-[10px] font-bold text-gray-200">{user?.name?.[0] ?? 'A'}</span>
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-xs font-semibold text-gray-200 truncate">{user?.name}</p>
-            <span className={`
-              text-[10px] font-medium px-1.5 py-0.5 rounded-full
-              ${isSuperAdmin
-                ? 'bg-violet-500/20 text-violet-400'
-                : 'bg-gray-700 text-gray-400'
-              }
-            `}>
-              {isSuperAdmin ? 'Super Admin' : 'Admin'}
-            </span>
+            <p className="text-[12px] font-semibold text-gray-200 truncate">{user?.name}</p>
+            <p className="text-[10px] text-gray-600">{isSuperAdmin ? 'Super Admin' : 'Admin'}</p>
           </div>
         </div>
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-500 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-[13px] text-gray-600 hover:text-red-400 hover:bg-red-500/[0.06] transition-colors"
         >
-          <LogOut size={15} />
+          <LogOut size={14} />
           Sign Out
         </button>
       </div>

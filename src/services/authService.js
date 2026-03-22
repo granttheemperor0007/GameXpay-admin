@@ -7,7 +7,7 @@ const MOCK_USERS = [
   {
     id: 'user-001',
     email: 'superadmin@gamexpay.com',
-    password: 'superadmin123',
+    adminpassword: 'superadmin123',
     name: 'Super Admin',
     role: 'superadmin',
   },

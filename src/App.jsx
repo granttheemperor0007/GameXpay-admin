@@ -7,6 +7,8 @@ import Dashboard from './pages/Dashboard';
 import Games from './pages/Games';
 import Orders from './pages/Orders';
 import Transactions from './pages/Transactions';
+import Settings from './pages/Settings';
+import { ToastProvider } from './components/Toast';
 
 function AppRoutes() {
   return (
@@ -24,6 +26,7 @@ function AppRoutes() {
         <Route path="games" element={<Games />} />
         <Route path="orders" element={<Orders />} />
         <Route path="transactions" element={<Transactions />} />
+        <Route path="settings" element={<Settings />} />
       </Route>
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
@@ -34,7 +37,9 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <AppRoutes />
+        <ToastProvider>
+          <AppRoutes />
+        </ToastProvider>
       </AuthProvider>
     </BrowserRouter>
   );

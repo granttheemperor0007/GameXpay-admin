@@ -1,4 +1,5 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Plus, Pencil, Power, Trash2, Package, Search, Calculator } from 'lucide-react';
 import { gamesService } from '../services/gamesService';
 import { useAuth } from '../context/AuthContext';
@@ -83,6 +84,7 @@ function GameFormModal({ isOpen, onClose, game, onSaved }) {
   const [imagePreview, setImagePreview] = useState('');
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
+  const bundlesEndRef = useRef(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -116,6 +118,7 @@ function GameFormModal({ isOpen, onClose, game, onSaved }) {
       ...f,
       bundles: [...f.bundles, { id: `new-${Date.now()}`, name: '', sellingPrice: '', costPrice: '' }],
     }));
+    setTimeout(() => bundlesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 50);
   };
 
   const updateBundle = (idx, field, value) => {
@@ -193,8 +196,8 @@ function GameFormModal({ isOpen, onClose, game, onSaved }) {
                 <img
                   src={imagePreview}
                   alt="preview"
-                  className="w-12 h-12 rounded-lg object-cover border border-gray-700"
-                  onError={(e) => { e.target.src = 'https://placehold.co/48x48/1f2937/7c3aed?text=?'; }}
+                  className="w-6 h-6 rounded object-cover border border-white/10"
+                  onError={(e) => { e.target.src = 'https://placehold.co/24x24/1e1e1e/ffffff?text=?'; }}
                 />
               )}
               <label className="flex-1 cursor-pointer">
@@ -268,6 +271,7 @@ function GameFormModal({ isOpen, onClose, game, onSaved }) {
                 No bundles yet. Click "Add Bundle" to add one.
               </p>
             )}
+            <div ref={bundlesEndRef} />
           </div>
         </div>
 
@@ -288,6 +292,7 @@ function GameFormModal({ isOpen, onClose, game, onSaved }) {
 // ─── Main Games Page ───────────────────────────────────────────────────────────
 export default function Games() {
   const { isSuperAdmin } = useAuth();
+  const location = useLocation();
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -301,6 +306,19 @@ export default function Games() {
   }, []);
 
   useEffect(() => { load(); }, [load]);
+
+  // Auto-open edit modal when navigated from sidebar
+  useEffect(() => {
+    const editGameId = location.state?.editGameId;
+    if (editGameId && games.length > 0) {
+      const target = games.find(g => g.id === editGameId);
+      if (target) {
+        setFormModal({ open: true, game: target });
+        // Clear state so refreshing doesn't re-open
+        window.history.replaceState({}, '');
+      }
+    }
+  }, [location.state, games]);
 
   const filtered = games.filter((g) =>
     g.name.toLowerCase().includes(search.toLowerCase())
@@ -327,8 +345,8 @@ export default function Games() {
         <img
           src={val}
           alt={row.name}
-          className="w-10 h-10 rounded-lg object-cover"
-          onError={(e) => { e.target.src = `https://placehold.co/40x40/1f2937/7c3aed?text=${row.shortName}`; }}
+          className="w-6 h-6 rounded object-cover"
+          onError={(e) => { e.target.src = `https://placehold.co/24x24/1e1e1e/ffffff?text=${row.shortName}`; }}
         />
       ),
     },
@@ -411,7 +429,7 @@ export default function Games() {
 
       {/* Search */}
       <div className="relative w-full sm:w-72">
-        <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+        <Search size={15} style={{ color: '#6F6F6F' }} className="absolute left-3 top-1/2 -translate-y-1/2" />
         <input
           className="w-full pl-9 pr-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500"
           placeholder="Search games..."

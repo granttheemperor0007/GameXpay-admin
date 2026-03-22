@@ -10,6 +10,7 @@ import Button from '../components/Button';
 import Modal from '../components/Modal';
 import ConfirmDialog from '../components/ConfirmDialog';
 import { Select } from '../components/Input';
+import DateRangePicker from '../components/DateRangePicker';
 
 function fmt(n) {
   return '₦' + Number(n).toLocaleString('en-NG');
@@ -301,7 +302,7 @@ export default function Orders() {
         <div className="flex flex-col sm:flex-row gap-3">
           {/* Search */}
           <div className="relative flex-1 sm:max-w-sm">
-            <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+            <Search size={15} style={{ color: '#6F6F6F' }} className="absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               className="w-full pl-9 pr-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500"
               placeholder="Search order ID, email, player ID..."
@@ -350,24 +351,12 @@ export default function Orders() {
                 <option key={g.id} value={g.id}>{g.name}</option>
               ))}
             </Select>
-            <div className="flex flex-col gap-1">
-              <label className="text-xs font-medium text-gray-400">From Date</label>
-              <input
-                type="date"
-                value={filters.dateFrom}
-                onChange={(e) => setFilters((f) => ({ ...f, dateFrom: e.target.value }))}
-                className="px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-500"
-              />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label className="text-xs font-medium text-gray-400">To Date</label>
-              <input
-                type="date"
-                value={filters.dateTo}
-                onChange={(e) => setFilters((f) => ({ ...f, dateTo: e.target.value }))}
-                className="px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-500"
-              />
-            </div>
+            <DateRangePicker
+              label="Date Range"
+              from={filters.dateFrom}
+              to={filters.dateTo}
+              onChange={(from, to) => setFilters((f) => ({ ...f, dateFrom: from, dateTo: to }))}
+            />
           </div>
         )}
       </div>

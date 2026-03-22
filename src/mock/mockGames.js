@@ -3,7 +3,7 @@ export const mockGames = [
     id: 'game-001',
     name: 'Call of Duty Mobile',
     shortName: 'CODM',
-    image: 'https://placehold.co/80x80/1a1a2e/7c3aed?text=CODM',
+    image: '/games/COD.png',
     redemptionInstructions:
       '1. Open CODM and tap your profile icon.\n2. Go to Settings > Account > Redeem Code.\n3. Enter the code provided in your order confirmation.\n4. Tap "Confirm" to receive your CP instantly.',
     status: 'active',
@@ -20,7 +20,7 @@ export const mockGames = [
     id: 'game-002',
     name: 'Free Fire',
     shortName: 'FF',
-    image: 'https://placehold.co/80x80/0f172a/f59e0b?text=FF',
+    image: '/games/FreeFire.png',
     redemptionInstructions:
       '1. Open Free Fire and tap your profile icon.\n2. Go to "Top Up" section.\n3. Enter your Player ID and select the diamond package.\n4. Complete the payment using Paystack.\n5. Diamonds will be credited within 5 minutes.',
     status: 'active',
@@ -37,7 +37,7 @@ export const mockGames = [
     id: 'game-003',
     name: 'PUBG Mobile',
     shortName: 'PUBG',
-    image: 'https://placehold.co/80x80/0c1a0c/22c55e?text=PUBG',
+    image: '/games/PUBG.png',
     redemptionInstructions:
       '1. Open PUBG Mobile and navigate to "UC" shop.\n2. Tap "Recharge".\n3. Select the UC package and proceed.\n4. Enter your Player ID when prompted.\n5. Complete payment — UC is credited instantly.',
     status: 'active',
@@ -54,7 +54,7 @@ export const mockGames = [
     id: 'game-004',
     name: 'Mobile Legends',
     shortName: 'MLBB',
-    image: 'https://placehold.co/80x80/1e0a3c/a855f7?text=MLBB',
+    image: '/games/MobileLegends.png',
     redemptionInstructions:
       '1. Open Mobile Legends: Bang Bang.\n2. Tap your avatar in the top-left corner.\n3. Go to "Diamonds" and tap "Buy Now".\n4. Enter your Player ID and Zone ID.\n5. Select the diamond pack and pay with Paystack.',
     status: 'active',
@@ -71,7 +71,7 @@ export const mockGames = [
     id: 'game-005',
     name: 'Clash of Clans',
     shortName: 'COC',
-    image: 'https://placehold.co/80x80/1a0e00/f97316?text=COC',
+    image: '/games/ClashOfClans.png',
     redemptionInstructions:
       '1. Open Clash of Clans.\n2. Tap the Gem icon in the top right.\n3. Select "Get More Gems".\n4. Enter your Player Tag when prompted.\n5. Payment via Paystack — gems added within 10 minutes.',
     status: 'inactive',
@@ -87,7 +87,7 @@ export const mockGames = [
     id: 'game-006',
     name: 'Genshin Impact',
     shortName: 'GI',
-    image: 'https://placehold.co/80x80/07172e/38bdf8?text=GI',
+    image: '/games/GenshinImpact.png',
     redemptionInstructions:
       '1. Log in to the Genshin Impact top-up center.\n2. Enter your UID and select server.\n3. Choose your Genesis Crystal pack.\n4. Complete payment — crystals credited within 1 hour.',
     status: 'active',
