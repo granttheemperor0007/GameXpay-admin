@@ -15,7 +15,7 @@ export default function Table({ columns, data, onRowClick, emptyMessage = 'No re
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-700/40">
+        <tbody>
           {data.length === 0 ? (
             <tr>
               <td
@@ -30,10 +30,8 @@ export default function Table({ columns, data, onRowClick, emptyMessage = 'No re
               <tr
                 key={row.id ?? idx}
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
-                className={`
-                  bg-gray-900/40 hover:bg-gray-800/50 transition-colors
-                  ${onRowClick ? 'cursor-pointer' : ''}
-                `}
+                style={{ backgroundColor: idx % 2 === 0 ? '#161615' : '#0F0F0D' }}
+                className={`hover:brightness-125 transition-all ${onRowClick ? 'cursor-pointer' : ''}`}
               >
                 {columns.map((col) => (
                   <td key={col.key} className="px-4 py-3 text-gray-300 whitespace-nowrap">
