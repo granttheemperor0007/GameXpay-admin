@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Plus, Pencil, Power, Trash2, Package, Search, Calculator } from 'lucide-react';
 import { gamesService } from '../services/gamesService';
 import { useAuth } from '../context/AuthContext';
@@ -293,13 +293,13 @@ function GameFormModal({ isOpen, onClose, game, onSaved }) {
 export default function Games() {
   const { isSuperAdmin } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [formModal, setFormModal] = useState({ open: false, game: null });
   const [toggleConfirm, setToggleConfirm] = useState({ open: false, game: null });
   const [toggleLoading, setToggleLoading] = useState(false);
-  const autoOpenedRef = useRef(false);
 
   const load = useCallback(() => {
     setLoading(true);
@@ -311,15 +311,15 @@ export default function Games() {
   // Auto-open edit modal when navigated from sidebar (only once)
   useEffect(() => {
     const editGameId = location.state?.editGameId;
-    if (editGameId && games.length > 0 && !autoOpenedRef.current) {
+    if (editGameId && games.length > 0) {
       const target = games.find(g => g.id === editGameId);
       if (target) {
-        autoOpenedRef.current = true;
         setFormModal({ open: true, game: target });
-        window.history.replaceState({}, '');
+        // Clear state via React Router so it doesn't retrigger on games reload
+        navigate(location.pathname, { replace: true, state: {} });
       }
     }
-  }, [location.state, games]);
+  }, [location.state]);
 
   const filtered = games.filter((g) =>
     g.name.toLowerCase().includes(search.toLowerCase())
