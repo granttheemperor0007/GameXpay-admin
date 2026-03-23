@@ -48,6 +48,7 @@ export default function AccountSettings() {
     setSaving(s => ({ ...s, [section]: true }));
     await settingsService.save(section, profile);
     setSaving(s => ({ ...s, [section]: false }));
+    if (section === 'profile') updateUser({ avatar: profile.avatar, name: profile.name });
     toast('Changes saved successfully', 'success');
   };
 
@@ -89,7 +90,7 @@ export default function AccountSettings() {
             <label className="cursor-pointer">
               <input type="file" accept="image/*" className="sr-only" onChange={e => {
                 const file = e.target.files[0];
-                if (file) { const url = URL.createObjectURL(file); setProfile(p => ({ ...p, avatar: url })); updateUser({ avatar: url }); }
+                if (file) { const url = URL.createObjectURL(file); setProfile(p => ({ ...p, avatar: url })); }
               }} />
               <span className="text-xs text-violet-400 hover:text-violet-300 mt-1 transition-colors inline-block">Upload avatar</span>
             </label>
