@@ -30,7 +30,7 @@ export default function Table({ columns, data, onRowClick, emptyMessage = 'No re
               <tr
                 key={row.id ?? idx}
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
-                style={{ backgroundColor: idx % 2 === 0 ? '#161615' : '#0F0F0D' }}
+                style={{ backgroundColor: idx % 2 === 0 ? '#0F0F0D' : '#161615' }}
                 className={`hover:brightness-125 transition-all ${onRowClick ? 'cursor-pointer' : ''}`}
               >
                 {columns.map((col) => (
