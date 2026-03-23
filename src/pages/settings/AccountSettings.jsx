@@ -69,13 +69,28 @@ export default function AccountSettings() {
       {/* Profile */}
       <SectionCard title="Admin Profile" description="Update your display name and contact info" onSave={() => save('profile')} saving={saving.profile}>
         <div className="flex items-center gap-5 mb-6">
-          <div className="w-16 h-16 rounded-xl bg-violet-600/20 border border-violet-500/20 flex items-center justify-center shrink-0">
-            <span className="text-2xl font-bold text-violet-400">{profile.name[0]}</span>
-          </div>
+          <label className="cursor-pointer group">
+            <input type="file" accept="image/*" className="sr-only" onChange={e => {
+              const file = e.target.files[0];
+              if (file) setProfile(p => ({ ...p, avatar: URL.createObjectURL(file) }));
+            }} />
+            <div className="w-16 h-16 rounded-xl bg-violet-600/20 border border-violet-500/20 overflow-hidden flex items-center justify-center shrink-0 group-hover:border-violet-400 transition-colors">
+              {profile.avatar
+                ? <img src={profile.avatar} alt="avatar" className="w-full h-full object-cover" />
+                : <span className="text-2xl font-bold text-violet-400">{profile.name[0]}</span>
+              }
+            </div>
+          </label>
           <div>
             <p className="text-sm font-medium text-gray-200">{profile.name}</p>
             <p className="text-xs text-gray-500">{profile.email}</p>
-            <button className="text-xs text-violet-400 hover:text-violet-300 mt-1 transition-colors">Upload avatar</button>
+            <label className="cursor-pointer">
+              <input type="file" accept="image/*" className="sr-only" onChange={e => {
+                const file = e.target.files[0];
+                if (file) setProfile(p => ({ ...p, avatar: URL.createObjectURL(file) }));
+              }} />
+              <span className="text-xs text-violet-400 hover:text-violet-300 mt-1 transition-colors inline-block">Upload avatar</span>
+            </label>
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
