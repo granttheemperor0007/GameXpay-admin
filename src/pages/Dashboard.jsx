@@ -76,7 +76,7 @@ export default function Dashboard() {
               className={`flex-1 px-6 py-5 ${i < arr.length - 1 ? 'border-r border-gray-700/50' : ''}`}
             >
               <p className="text-xs text-gray-400 mb-1.5 font-medium">{stat.label}</p>
-              <p className={`text-3xl leading-none mb-2 ${stat.color}`} style={{ fontFamily: "'Big Shoulders Display', sans-serif", fontWeight: 700, letterSpacing: '0em' }}>{stat.value}</p>
+              <p className={`text-3xl leading-none mb-2 ${stat.color}`} style={{ fontFamily: "'Big Shoulders Display', sans-serif", fontWeight: 900, letterSpacing: '0em' }}>{stat.value}</p>
               <div className="flex items-center gap-1.5 flex-wrap">
                 <span className={`text-xs font-semibold px-1.5 py-0.5 rounded ${stat.positive ? 'text-emerald-400 bg-emerald-500/10' : 'text-red-400 bg-red-500/10'}`}>
                   {stat.change}
