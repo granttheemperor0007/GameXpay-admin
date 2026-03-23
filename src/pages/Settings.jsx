@@ -57,7 +57,7 @@ export default function Settings() {
                 }`}
               >
                 <Icon size={15} className={isActive ? 'text-violet-400' : 'text-gray-500 group-hover:text-gray-300'} />
-                <span className="flex-1 leading-snug">{s.label}</span>
+                <span className="flex-1 truncate">{s.label}</span>
                 {isActive && <ChevronRight size={13} className="text-violet-400" />}
               </button>
             );
