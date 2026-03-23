@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { User, Shield, Monitor, FileText, Plus, Trash2, Check, X } from 'lucide-react';
 import { settingsService } from '../../services/settingsService';
 import { useToast } from '../../components/Toast';
+import { useAuth } from '../../context/AuthContext';
 import Toggle from '../../components/Toggle';
 import Button from '../../components/Button';
 
@@ -28,6 +29,7 @@ function SectionCard({ title, description, children, onSave, saving }) {
 
 export default function AccountSettings() {
   const toast = useToast();
+  const { updateUser } = useAuth();
   const [profile, setProfile] = useState({ name: 'Grant Bryan', email: 'superadmin@gamexpay.com', phone: '+234 801 234 5678' });
   const [roles, setRoles] = useState([]);
   const [sessions, setSessions] = useState([]);
@@ -87,7 +89,7 @@ export default function AccountSettings() {
             <label className="cursor-pointer">
               <input type="file" accept="image/*" className="sr-only" onChange={e => {
                 const file = e.target.files[0];
-                if (file) setProfile(p => ({ ...p, avatar: URL.createObjectURL(file) }));
+                if (file) { const url = URL.createObjectURL(file); setProfile(p => ({ ...p, avatar: url })); updateUser({ avatar: url }); }
               }} />
               <span className="text-xs text-violet-400 hover:text-violet-300 mt-1 transition-colors inline-block">Upload avatar</span>
             </label>

@@ -41,11 +41,19 @@ export function AuthProvider({ children }) {
     setUser(null);
   }, []);
 
+  const updateUser = useCallback((patch) => {
+    setUser(prev => {
+      const updated = { ...prev, ...patch };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      return updated;
+    });
+  }, []);
+
   const isSuperAdmin = user?.role === 'superadmin';
   const isAuthenticated = Boolean(user);
 
   return (
-    <AuthContext.Provider value={{ user, loading, error, login, logout, isSuperAdmin, isAuthenticated }}>
+    <AuthContext.Provider value={{ user, loading, error, login, logout, updateUser, isSuperAdmin, isAuthenticated }}>
       {children}
     </AuthContext.Provider>
   );
