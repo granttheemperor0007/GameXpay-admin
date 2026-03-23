@@ -299,6 +299,7 @@ export default function Games() {
   const [formModal, setFormModal] = useState({ open: false, game: null });
   const [toggleConfirm, setToggleConfirm] = useState({ open: false, game: null });
   const [toggleLoading, setToggleLoading] = useState(false);
+  const autoOpenedRef = useRef(false);
 
   const load = useCallback(() => {
     setLoading(true);
@@ -307,14 +308,14 @@ export default function Games() {
 
   useEffect(() => { load(); }, [load]);
 
-  // Auto-open edit modal when navigated from sidebar
+  // Auto-open edit modal when navigated from sidebar (only once)
   useEffect(() => {
     const editGameId = location.state?.editGameId;
-    if (editGameId && games.length > 0) {
+    if (editGameId && games.length > 0 && !autoOpenedRef.current) {
       const target = games.find(g => g.id === editGameId);
       if (target) {
+        autoOpenedRef.current = true;
         setFormModal({ open: true, game: target });
-        // Clear state so refreshing doesn't re-open
         window.history.replaceState({}, '');
       }
     }
