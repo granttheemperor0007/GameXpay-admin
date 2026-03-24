@@ -117,7 +117,17 @@ function OrderDetailModal({ order, isOpen, onClose, onStatusChange, onNoteSaved,
               <Row label="Game" value={order.game.name} />
               <Row label="Bundle" value={order.bundle.name} />
               <Row label="Selling Price" value={fmt(order.bundle.sellingPrice)} />
-              {isSuperAdmin && <Row label="Profit" value={fmt(order.profit)} />}
+              {isSuperAdmin && <Row label="Cost Price" value={fmt(order.bundle.costPrice)} />}
+              {isSuperAdmin && (
+                <Row
+                  label="Profit"
+                  value={
+                    <span className={order.profit >= 0 ? 'text-emerald-400' : 'text-red-400'}>
+                      {fmt(order.profit)}
+                    </span>
+                  }
+                />
+              )}
             </div>
           </div>
 
