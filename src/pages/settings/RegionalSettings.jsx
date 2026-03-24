@@ -1,10 +1,56 @@
-import { useState, useEffect } from 'react';
-import { Plus, Trash2, X } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Plus, Trash2, X, Search, ChevronDown } from 'lucide-react';
 import { settingsService } from '../../services/settingsService';
 import { useToast } from '../../components/Toast';
 import { useAuth } from '../../context/AuthContext';
 import Toggle from '../../components/Toggle';
 import Button from '../../components/Button';
+
+const ALL_COUNTRIES = [
+  { name: 'Nigeria', code: 'NG', flag: '🇳🇬' },
+  { name: 'Ghana', code: 'GH', flag: '🇬🇭' },
+  { name: 'Kenya', code: 'KE', flag: '🇰🇪' },
+  { name: 'South Africa', code: 'ZA', flag: '🇿🇦' },
+  { name: 'Egypt', code: 'EG', flag: '🇪🇬' },
+  { name: 'Tanzania', code: 'TZ', flag: '🇹🇿' },
+  { name: 'Uganda', code: 'UG', flag: '🇺🇬' },
+  { name: 'Ethiopia', code: 'ET', flag: '🇪🇹' },
+  { name: 'Senegal', code: 'SN', flag: '🇸🇳' },
+  { name: 'Cameroon', code: 'CM', flag: '🇨🇲' },
+  { name: 'Côte d\'Ivoire', code: 'CI', flag: '🇨🇮' },
+  { name: 'Rwanda', code: 'RW', flag: '🇷🇼' },
+  { name: 'Zambia', code: 'ZM', flag: '🇿🇲' },
+  { name: 'Zimbabwe', code: 'ZW', flag: '🇿🇼' },
+  { name: 'Mozambique', code: 'MZ', flag: '🇲🇿' },
+  { name: 'United States', code: 'US', flag: '🇺🇸' },
+  { name: 'United Kingdom', code: 'GB', flag: '🇬🇧' },
+  { name: 'Canada', code: 'CA', flag: '🇨🇦' },
+  { name: 'Australia', code: 'AU', flag: '🇦🇺' },
+  { name: 'Germany', code: 'DE', flag: '🇩🇪' },
+  { name: 'France', code: 'FR', flag: '🇫🇷' },
+  { name: 'Netherlands', code: 'NL', flag: '🇳🇱' },
+  { name: 'Spain', code: 'ES', flag: '🇪🇸' },
+  { name: 'Italy', code: 'IT', flag: '🇮🇹' },
+  { name: 'Brazil', code: 'BR', flag: '🇧🇷' },
+  { name: 'Mexico', code: 'MX', flag: '🇲🇽' },
+  { name: 'Argentina', code: 'AR', flag: '🇦🇷' },
+  { name: 'Colombia', code: 'CO', flag: '🇨🇴' },
+  { name: 'India', code: 'IN', flag: '🇮🇳' },
+  { name: 'Pakistan', code: 'PK', flag: '🇵🇰' },
+  { name: 'Bangladesh', code: 'BD', flag: '🇧🇩' },
+  { name: 'Indonesia', code: 'ID', flag: '🇮🇩' },
+  { name: 'Malaysia', code: 'MY', flag: '🇲🇾' },
+  { name: 'Philippines', code: 'PH', flag: '🇵🇭' },
+  { name: 'Thailand', code: 'TH', flag: '🇹🇭' },
+  { name: 'Vietnam', code: 'VN', flag: '🇻🇳' },
+  { name: 'Singapore', code: 'SG', flag: '🇸🇬' },
+  { name: 'UAE', code: 'AE', flag: '🇦🇪' },
+  { name: 'Saudi Arabia', code: 'SA', flag: '🇸🇦' },
+  { name: 'Turkey', code: 'TR', flag: '🇹🇷' },
+  { name: 'China', code: 'CN', flag: '🇨🇳' },
+  { name: 'Japan', code: 'JP', flag: '🇯🇵' },
+  { name: 'South Korea', code: 'KR', flag: '🇰🇷' },
+];
 
 function SectionCard({ title, description, children, onSave, saving, action }) {
   return (
@@ -26,27 +72,76 @@ function SectionCard({ title, description, children, onSave, saving, action }) {
   );
 }
 
-const emptyCountry = { name: '', code: '', flag: '', enabled: true, kyc: 'Basic', minAge: 18, taxRate: 0, amlThreshold: 500000 };
+const emptyForm = { selected: null, enabled: true, kyc: 'Basic', minAge: 18, taxRate: 0, amlThreshold: 500000 };
 
-function AddCountryModal({ isOpen, onClose, onAdd }) {
-  const [form, setForm] = useState(emptyCountry);
-  const [errors, setErrors] = useState({});
+function CountryPicker({ value, onChange, exclude }) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const ref = useRef(null);
 
-  useEffect(() => { if (isOpen) { setForm(emptyCountry); setErrors({}); } }, [isOpen]);
+  useEffect(() => {
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const filtered = ALL_COUNTRIES.filter(c =>
+    !exclude.includes(c.code) &&
+    c.name.toLowerCase().includes(query.toLowerCase())
+  );
+
+  return (
+    <div ref={ref} className="relative">
+      <button type="button" onClick={() => { setOpen(o => !o); setQuery(''); }}
+        className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm bg-gray-800 border border-gray-700 text-left focus:outline-none focus:ring-2 focus:ring-violet-500 transition-colors">
+        {value ? (
+          <span className="flex items-center gap-2 text-gray-100">
+            <span>{value.flag}</span><span>{value.name}</span>
+            <span className="text-gray-500 text-xs">({value.code})</span>
+          </span>
+        ) : (
+          <span className="text-gray-500">Select a country...</span>
+        )}
+        <ChevronDown size={14} style={{ color: '#6F6F6F' }} />
+      </button>
+      {open && (
+        <div className="absolute z-10 mt-1 w-full bg-gray-800 border border-gray-700 rounded-xl shadow-2xl overflow-hidden">
+          <div className="relative px-3 py-2 border-b border-gray-700">
+            <Search size={13} className="absolute left-5 top-1/2 -translate-y-1/2" style={{ color: '#6F6F6F' }} />
+            <input autoFocus value={query} onChange={e => setQuery(e.target.value)}
+              placeholder="Search countries..."
+              className="w-full pl-7 pr-3 py-1.5 text-sm bg-transparent text-gray-100 placeholder-gray-500 focus:outline-none" />
+          </div>
+          <div className="max-h-52 overflow-y-auto">
+            {filtered.length === 0 ? (
+              <p className="text-xs text-gray-500 text-center py-4">No countries found</p>
+            ) : filtered.map(c => (
+              <button key={c.code} type="button"
+                onClick={() => { onChange(c); setOpen(false); }}
+                className="w-full flex items-center gap-2.5 px-3 py-2.5 text-sm text-gray-200 hover:bg-gray-700 transition-colors text-left">
+                <span>{c.flag}</span>
+                <span>{c.name}</span>
+                <span className="text-gray-500 text-xs ml-auto">{c.code}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function AddCountryModal({ isOpen, onClose, onAdd, existingCodes }) {
+  const [form, setForm] = useState(emptyForm);
+  const [error, setError] = useState('');
+
+  useEffect(() => { if (isOpen) { setForm(emptyForm); setError(''); } }, [isOpen]);
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
-  const validate = () => {
-    const e = {};
-    if (!form.name.trim()) e.name = 'Required';
-    if (!form.code.trim()) e.code = 'Required';
-    return e;
-  };
-
   const handleAdd = () => {
-    const e = validate();
-    if (Object.keys(e).length) { setErrors(e); return; }
-    onAdd({ ...form, code: form.code.toUpperCase() });
+    if (!form.selected) { setError('Please select a country'); return; }
+    onAdd({ ...form.selected, enabled: form.enabled, kyc: form.kyc, minAge: form.minAge, taxRate: form.taxRate, amlThreshold: form.amlThreshold });
     onClose();
   };
 
@@ -63,25 +158,10 @@ function AddCountryModal({ isOpen, onClose, onAdd }) {
           </button>
         </div>
         <div className="p-6 space-y-4">
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs font-medium text-gray-400 mb-1">Country Name *</label>
-              <input value={form.name} onChange={e => set('name', e.target.value)} placeholder="e.g. Nigeria"
-                className="w-full px-3 py-2.5 rounded-lg text-sm bg-gray-800 border border-gray-700 text-gray-100 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-violet-500" />
-              {errors.name && <p className="text-xs text-red-400 mt-1">{errors.name}</p>}
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-400 mb-1">Country Code *</label>
-              <input value={form.code} onChange={e => set('code', e.target.value)} placeholder="e.g. NG" maxLength={3}
-                className="w-full px-3 py-2.5 rounded-lg text-sm bg-gray-800 border border-gray-700 text-gray-100 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-violet-500 uppercase" />
-              {errors.code && <p className="text-xs text-red-400 mt-1">{errors.code}</p>}
-            </div>
-          </div>
-
           <div>
-            <label className="block text-xs font-medium text-gray-400 mb-1">Flag Emoji</label>
-            <input value={form.flag} onChange={e => set('flag', e.target.value)} placeholder="e.g. 🇳🇬"
-              className="w-full px-3 py-2.5 rounded-lg text-sm bg-gray-800 border border-gray-700 text-gray-100 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-violet-500" />
+            <label className="block text-xs font-medium text-gray-400 mb-1">Country *</label>
+            <CountryPicker value={form.selected} onChange={v => { set('selected', v); setError(''); }} exclude={existingCodes} />
+            {error && <p className="text-xs text-red-400 mt-1">{error}</p>}
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -156,7 +236,7 @@ export default function RegionalSettings() {
 
   return (
     <div className="space-y-6">
-      <AddCountryModal isOpen={addModal} onClose={() => setAddModal(false)} onAdd={addRegion} />
+      <AddCountryModal isOpen={addModal} onClose={() => setAddModal(false)} onAdd={addRegion} existingCodes={regions.map(r => r.code)} />
 
       {/* Region Table */}
       <SectionCard
