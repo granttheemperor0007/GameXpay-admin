@@ -2,7 +2,7 @@ import { useRive } from '@rive-app/react-canvas';
 
 export default function EmptyState({ message = 'No records found.' }) {
   const { RiveComponent } = useRive({
-    src: '/empty.riv',
+    src: '/search-emp.riv',
     autoplay: true,
   });
 
