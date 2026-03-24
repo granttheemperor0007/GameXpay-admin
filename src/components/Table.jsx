@@ -1,3 +1,5 @@
+import EmptyState from './EmptyState';
+
 export default function Table({ columns, data, onRowClick, emptyMessage = 'No records found.' }) {
   return (
     <div className="overflow-x-auto scrollbar-thin rounded-xl border border-gray-700/50">
@@ -18,11 +20,8 @@ export default function Table({ columns, data, onRowClick, emptyMessage = 'No re
         <tbody>
           {data.length === 0 ? (
             <tr>
-              <td
-                colSpan={columns.length}
-                className="px-4 py-12 text-center text-gray-500"
-              >
-                {emptyMessage}
+              <td colSpan={columns.length}>
+                <EmptyState message={emptyMessage} />
               </td>
             </tr>
           ) : (
