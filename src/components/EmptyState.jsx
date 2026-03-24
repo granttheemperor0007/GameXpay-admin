@@ -1,18 +1,10 @@
-import { useEffect } from 'react';
 import { useRive } from '@rive-app/react-canvas';
 
 export default function EmptyState({ message = 'No records found.' }) {
-  const { RiveComponent, rive } = useRive({
-    src: '/search-emp.riv',
+  const { RiveComponent } = useRive({
+    src: '/search-emp-loop.riv',
     autoplay: true,
   });
-
-  useEffect(() => {
-    if (!rive) return;
-    const onStop = () => rive.play();
-    rive.on('stop', onStop);
-    return () => rive.off('stop', onStop);
-  }, [rive]);
 
   return (
     <div className="flex flex-col items-center justify-center py-16 gap-3">
