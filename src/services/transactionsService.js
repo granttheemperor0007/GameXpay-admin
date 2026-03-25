@@ -24,10 +24,10 @@ export const transactionsService = {
     if (filters.dateTo) {
       results = results.filter((t) => new Date(t.createdAt) <= new Date(filters.dateTo));
     }
-    if (filters.amountMin !== undefined) {
+    if (filters.amountMin !== '' && filters.amountMin != null) {
       results = results.filter((t) => t.amount >= Number(filters.amountMin));
     }
-    if (filters.amountMax !== undefined) {
+    if (filters.amountMax !== '' && filters.amountMax != null) {
       results = results.filter((t) => t.amount <= Number(filters.amountMax));
     }
     if (filters.search) {
